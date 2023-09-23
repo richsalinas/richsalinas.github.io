@@ -24,7 +24,7 @@ knitr::opts_chunk$set(echo = TRUE)
 The 2023 MLB season is coming to a close as there is less than one month of regular season to go. As we look at the awards for players at the end of each season, we might find that this year's NL Cy Young race is very difficult to choose from. So far, there is no clear-cut winner -- and if you believe there is, there is probably a specific stat or bias that you tend to weigh higher than the rest.
 
 ```{r, echo=FALSE, out.width="49%", out.height="20%", fig.cap="Justin Steele, Blake Snell, Zac Gallen (pictured top-left, top-right, bottom)", fig.show="hold", fig.align="center"}
-knitr::include_graphics(c("steele.jpg", "bsnell.jpg", "gallen.webp"), error = FALSE)
+knitr::include_graphics(c("images/steele.jpg", "images/bsnell.jpg", "images/gallen.webp"), error = FALSE)
 ```
 
 \bigskip
@@ -138,7 +138,7 @@ Instead of going about comparing each of the candidates to one another, I though
 ### <a name = "steele"></a> Justin Steele
 
 ```{r, echo=FALSE, fig.show="hold", fig.align="center", fig.cap="Source: [baseball-reference.com](https://www.baseball-reference.com/)"}
-knitr::include_graphics(c("steeleprofile.jpg", "steelestats.PNG"), error = FALSE)
+knitr::include_graphics(c("images/steeleprofile.jpg", "images/steelestats.PNG"), error = FALSE)
 ```
 
 #### 1. It's (Not) A Hard Knock Life
@@ -150,7 +150,7 @@ Steele has not been known this year to be the strikeout king. Out of all three c
 Justin Steele has made a case for Cy Young and he has been able to do with essentially a 2-pitch arsenal. Though he has recently been trying to add in a changeup, he has used his fastball and slider to dominate his competition. His combined usage of these two pitches have been 96.7% of his total pitches, according to Baseball Savant. It has been absolutely incredible to see Steele be this dominant when his opponent essentially has a 50/50 chance of guessing the pitch he is going to throw. Most starting pitchers attempt to develop 4-5 pitches so that their movement matrix varies all over the plate. The fact that he Steele has been able to average just under 6 innings per game and go through orders three times has been amazing to watch. However, it is important to note that this has always been volatile and could go awry at any point, including for the remained of the season and throughout the playoffs.
 
 ```{r, echo=FALSE, fig.align = "center", fig.cap = "Source: [Baseball Savant](https://baseballsavant.mlb.com/)"}
-knitr::include_graphics("steelepitches.PNG", error = FALSE)
+knitr::include_graphics("images/steelepitches.PNG", error = FALSE)
 ```
 
 
@@ -161,7 +161,7 @@ Quality starts is a very subjective term as some people may have different stand
 ### <a name = "snell"></a> Blake Snell
 
 ```{r, echo=FALSE, fig.show="hold", fig.align="center", fig.cap="Source: [baseball-reference.com](https://www.baseball-reference.com/)"}
-knitr::include_graphics(c("snellprofile.jpg", "snellstats.PNG"), error = FALSE)
+knitr::include_graphics(c("images/snellprofile.jpg", "images/snellstats.PNG"), error = FALSE)
 ```
 
 #### 1. FIP and Walks
@@ -196,7 +196,7 @@ The average whiff rate for MLB pitchers is 24.9%, according to Baseball Savant. 
 ### <a name = "gallen"></a> Zac Gallen
 
 ```{r, echo=FALSE, fig.show="hold", fig.align="center", fig.cap="Source: [baseball-reference.com](https://www.baseball-reference.com/)"}
-knitr::include_graphics(c("gallenprofile.jpg", "gallenstats.PNG"), error = FALSE)
+knitr::include_graphics(c("images/gallenprofile.jpg", "images/gallenstats.PNG"), error = FALSE)
 ```
 ```{r}
 
