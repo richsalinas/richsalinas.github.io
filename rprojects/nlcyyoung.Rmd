@@ -1,0 +1,207 @@
+---
+title: "2023 NL Cy Young Battle"
+author: "Richie Salinas"
+date: "2023-09-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Table of Contents
+
+- [Who Will Win?](#candidates)
+- [Past Cy Young Winners](#pastwinners)
+- [Three Stats to Consider](#threestats)
+  - [Justin Steele](#steele)
+  - [Blake Snell](#snell)
+  - [Zac Gallen](#gallen)
+- [My Vote](#vote)
+
+### <a name = "candidates"></a> Who Will Win?
+
+The 2023 MLB season is coming to a close as there is less than one month of regular season to go. As we look at the awards for players at the end of each season, we might find that this year's NL Cy Young race is very difficult to choose from. So far, there is no clear-cut winner -- and if you believe there is, there is probably a specific stat or bias that you tend to weigh higher than the rest.
+
+```{r, echo=FALSE, out.width="49%", out.height="20%", fig.cap="Justin Steele, Blake Snell, Zac Gallen (pictured top-left, top-right, bottom)", fig.show="hold", fig.align="center"}
+knitr::include_graphics(c("steele.jpg", "bsnell.jpg", "gallen.webp"), error = FALSE)
+```
+
+\bigskip
+
+If I had to narrow down the NL Cy Young race to three pitchers, it would have to be Zac Gallen, Justin Steele, and Blake Snell. All three of these pitchers have their own claims for why they should be the Cy Young. However, it is important to remember what receiving the Cy Young means. The Cy Young award is given to the best pitcher in each league. But how do you explain "best" in this case? For teams like the Cubs and the Diamondbacks, who most have predicted in the beginning of the season to not make the playoffs, Justin Steele and Zac Gallen have been significant factors for those teams. But what about a guy like Blake Snell, whose team looks like they're no longer in the race. Does ERA determine the award? WHIP? WAR? FIP? The simple eye test? All of these things are considered when voting for the Cy Young. But how do these candidates compare to the previous stats of all previous Cy Young seasons?
+
+\bigskip
+
+```{r, include=FALSE}
+library(tidyverse)
+library(Lahman)
+
+AwardsPlayers = as_tibble(AwardsPlayers)
+People = as_tibble(People)
+Pitching = as_tibble(Pitching)
+
+Pitching = Pitching |>
+  summarise(
+    across(c(W:GIDP), sum),
+    .by = c(playerID, yearID)
+  ) |>
+  mutate(
+    BAOpp = round(H / (BFP - BB - IBB - HBP - SH - SF), digits = 3),
+    ERA = round((9 * ER) / (IPouts / 3), digits = 2),
+    WHIP = round((BB + H) / (IPouts / 3), digits = 3),
+    K_BB_ratio = round(SO / BB, digits = 2)
+  ) |> 
+  select(-c(SH, SF, GIDP)) |> 
+  add_row(playerID = "verlaju01", yearID = 2022, W = 18, L = 4, G = 28, GS = 28, CG = 0, SHO = 0, SV = 0, IPouts = 525, H = 116, ER = 34, HR = 12, BB = 29, SO = 185, BAOpp = .186, ERA = 1.75, IBB = 0, WP = 3, HBP = 6, BK = 0, BFP = 666, GF = 0, R = 43, WHIP = .829, K_BB_ratio = 6.38) |> 
+  add_row(playerID = "alcansa01", yearID = 2022, W = 14, L = 9, G = 32, GS = 32, CG = 6, SHO = 1, SV = 0, IPouts = 686, H = 174, ER = 58, HR = 16, BB = 50, SO = 207, BAOpp = .212, ERA = 2.28, IBB = 1, WP = 3, HBP = 9, BK = 0, BFP = 886, GF = 0, R = 67, WHIP = .980, K_BB_ratio = 4.14)
+```
+
+### <a name = "pastwinners"></a> Past Cy Young Winners
+
+```{r}
+cyyoung_winners = AwardsPlayers |> 
+  filter(awardID == "Cy Young Award") |> 
+  select(playerID, yearID) |> 
+  left_join(People, by = "playerID") |> 
+  select(playerID, nameFirst, nameLast, yearID)
+
+head(cyyoung_winners)
+```
+
+Using the AwardsPlayers dataset, we can filter out the Cy Young award winners really easily. Unfortunately, the latest Cy Young winners in 2022 are not included in this dataset because the 2022 stats are not updated in the Lahman package.
+
+```{r}
+tail(cyyoung_winners)
+```
+
+Nevertheless, we can add them ourselves.
+
+```{r}
+cyyoung_winners = cyyoung_winners |> 
+  add_row(playerID = "verlaju01", nameFirst = "Justin", nameLast = "Verlander", yearID = 2022) |> 
+  add_row(playerID = "alcansa01", nameFirst = "Sandy", nameLast = "Alcantara", yearID = 2022)
+
+tail(cyyoung_winners)
+```
+
+**Note:** I will also be importing their data into this document, but that code will not be included to see in the markdown.
+
+\bigskip
+
+To show what they all did in their Cy Young seasons, we will add their pitching stats to this dataset.
+
+```{r}
+cyyoung_winners = cyyoung_winners |> 
+  left_join(Pitching, by = c("playerID", "yearID"))
+
+tail(cyyoung_winners)
+```
+Here are the latest Cy Young award winners' stats.
+
+\bigskip
+
+Let's check out some details about one of the most famous stats for pitchers: ERA.
+
+```{r}
+summary(cyyoung_winners$ERA)
+```
+
+
+With these basic statistics, we can see that over the years, the lowest ERA for a Cy Young winner was 1.04. The highest ERA was 3.66. The average of all ERAs for Cy Young winners is 2.47 which is insanely elite for today's standards. This obviously can be a bit skewed due to the lower ERAs that were produced in the 60s-80s. If we want, we could find the average for the last 20 years of baseball to have a little more recent standard.
+
+```{r}
+last_twenty_years = cyyoung_winners |> 
+  filter(yearID >= 2003)
+
+summary(last_twenty_years$ERA)
+```
+
+What we actually find is that the mean for the last twenty years is actually lower than the overall mean at 2.44.
+
+\bigskip
+
+One of my more favorite stats to look at is WHIP. This stat measures the amount of walks and hits given up per inning pitched. Obviously, the lower the better.
+
+```{r}
+summary(cyyoung_winners$WHIP)
+```
+
+1.04 is an excellent WHIP stat and it being the mean for all Cy Young winners continues to show how dominant all of these pitchers were throughout the season they won the award. This leads us to the question of what specific stats should be weighted higher than others. If there's a pitcher who has a run higher in their ERA but with 30 extra innings pitched, are they viewed in a worst position? If you are on a team that was not viewed as a playoff team during the preseason but are now competing for a playoff spot, are you viewed as more valuable? These are all the trade-offs that we have to consider when we look at all three candidates for this year's NL Cy Young Award.
+
+## <a name = "threestats"></a> Three Stats to Consider for Each Candidate
+
+Instead of going about comparing each of the candidates to one another, I thought that it would be interesting to point out the top 5 stats of each pitcher that could either help or refute their case for Cy Young. Each pitcher has an interesting trait about them and it's important to note the significance of what each pitcher is achieving this year.
+
+\bigskip
+
+### <a name = "steele"></a> Justin Steele
+
+```{r, echo=FALSE, fig.show="hold", fig.align="center", fig.cap="Source: [baseball-reference.com](https://www.baseball-reference.com/)"}
+knitr::include_graphics(c("steeleprofile.jpg", "steelestats.PNG"), error = FALSE)
+```
+
+#### 1. It's (Not) A Hard Knock Life
+
+Steele has not been known this year to be the strikeout king. Out of all three candidates, he has the lowest counting strikeouts. He comes nearly 100 behind the strikeout leader of Spencer Strider. However, he also does not walk a lot either, having a 5.1% walk rate this year. This means that a lot of his batters faced this year have been reliant on the balls in play and fielding. But what makes fielding way easier? Groundballs and sub-95 mph hits. Steele's groundball rate is 48.3% of his total balls in play while also having a 36.4% HardHit%. His barrel rate is in the 86th percentile of all pitchers, according to Baseball Savant. Because of this, he is currently leading the league in HR9 with a 0.6. A crucial part of his game is making outs by soft-hit baseballs and he has been crushing that this year.
+
+#### 2. 2-Pitch Arsenal
+
+Justin Steele has made a case for Cy Young and he has been able to do with essentially a 2-pitch arsenal. Though he has recently been trying to add in a changeup, he has used his fastball and slider to dominate his competition. His combined usage of these two pitches have been 96.7% of his total pitches, according to Baseball Savant. It has been absolutely incredible to see Steele be this dominant when his opponent essentially has a 50/50 chance of guessing the pitch he is going to throw. Most starting pitchers attempt to develop 4-5 pitches so that their movement matrix varies all over the plate. The fact that he Steele has been able to average just under 6 innings per game and go through orders three times has been amazing to watch. However, it is important to note that this has always been volatile and could go awry at any point, including for the remained of the season and throughout the playoffs.
+
+```{r, echo=FALSE, fig.align = "center", fig.cap = "Source: [Baseball Savant](https://baseballsavant.mlb.com/)"}
+knitr::include_graphics("steelepitches.PNG", error = FALSE)
+```
+
+
+#### 3. Quality Starts
+
+Quality starts is a very subjective term as some people may have different standards for what they think a pitcher should be doing based on their expectations. But based on the statistic that has been created for quality starts, a quality start is when a pitcher pitches at least 6 innings and gives up no more than three runs. Justin Steele, out of his 27 games started, has done that *20* times this year. He is ranked third so far in most quality starts, but has the highest quality start percentage at 74%. Justin Steele being able to eat innings and throw gems consistently is the reason why he's in this conversation. Along with the fact that this is his third year, no one really expected Steele to come and have the season he did.
+
+### <a name = "snell"></a> Blake Snell
+
+```{r, echo=FALSE, fig.show="hold", fig.align="center", fig.cap="Source: [baseball-reference.com](https://www.baseball-reference.com/)"}
+knitr::include_graphics(c("snellprofile.jpg", "snellstats.PNG"), error = FALSE)
+```
+
+#### 1. FIP and Walks
+
+Snell holds a lot of top places in statistics such as ERA and H9. However, he also holds the league in the most walks given up and most wild pitches thrown. When we look at a stat like ERA, it considers metrics such as balls in play that Snell sometimes does not have control over. FIP helps to create a measurement for ERA that takes into consideration what Snell can **actually** control such as strikeouts, walks, hit by pitches, and homeruns. His ERA is 2.43; his FIP is 3.53. The difference between ERA to FIP is -1.11 which is the lowest difference in baseball by an incredible margin (Bryce Elder is in 2nd with -0.82). A major problem with that has been his walks. He has only given up 111 hits so far, but has given up 93 walks. This gives a hit/walk ratio of 1.19.
+
+```{r}
+cyyoung_winners |> 
+  mutate(H_BB_ratio = H/BB) |> 
+  slice_min(H_BB_ratio) |> 
+  select(playerID:yearID, H_BB_ratio)
+```
+
+The lowest hit/walk ratio from Cy Young winners comes from 1958, one of the early years of the development of the award, from Bob Turley at 1.39. Though it has been amazing to see him hold off the amount of hits, Snell would have probably been unanimously the winner of this award had he not given up so many bases on balls.
+
+#### 2. Whiffin'
+
+Though the last stat looked at some of his downsides of not having a lot of control of the ball, when he throws an enticing pitch, batters swing. 
+
+\bigskip
+
+And they miss. 
+
+\bigskip
+
+**A lot.** 
+
+\bigskip
+
+The average whiff rate for MLB pitchers is 24.9%, according to Baseball Savant. Blake Snell's whiff rate is at a **36.5%**. That is the second highest whiff rate for a starter in MLB behind Spencer Strider who is clearly showing that through his massive lead in strikeouts. 
+
+### <a name = "gallen"></a> Zac Gallen
+
+```{r, echo=FALSE, fig.show="hold", fig.align="center", fig.cap="Source: [baseball-reference.com](https://www.baseball-reference.com/)"}
+knitr::include_graphics(c("gallenprofile.jpg", "gallenstats.PNG"), error = FALSE)
+```
+```{r}
+
+```
+
+
+### <a name = "vote"></a> My Vote
+
