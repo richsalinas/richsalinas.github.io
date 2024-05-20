@@ -1,11 +1,14 @@
 body {
     margin: 0;
     background-color: aliceblue;
-    text-align: center;
+    text-align: left; /* Aligns text to the left */
+}
+
+h1, p, a, .img-linkedinpic {
+    margin-left: 20px; /* Adjust the margin as needed */
 }
 
 .img-linkedinpic {
     width: 300px;
-    border: black;
-    border-width: 5px;
+    border: 5px solid black; /* Corrected border property */
 }
